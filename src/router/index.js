@@ -65,10 +65,15 @@ export const constantRouterMap = [
     meta: { title: '频道管理', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
+        path: 'channel',
+        name: 'channel',
         component: () => import('@/views/channel/index'),
-        meta: { title: '频道管理', icon: 'table' }
+        meta: { title: '频道管理', icon: 'channel' }
+      }, {
+        path: 'videoCate',
+        name: 'videoCate',
+        component: () => import('@/views/videoCate/index'),
+        meta: { title: '视频类型管理', icon: 'videoCate' }
       }
     ]
   },
@@ -81,11 +86,22 @@ export const constantRouterMap = [
         path: 'swiper',
         name: 'Swiper',
         component: () => import('@/views/swiper/index'),
-        meta: { title: '首页轮播图', icon: 'table' }
+        meta: { title: '轮播图', icon: 'swiper' }
       }
     ]
   },
-
+  {
+    path: '/video',
+    component: Layout,
+    children: [
+      {
+        path: 'video',
+        name: 'video',
+        component: () => import('@/views/video/index'),
+        meta: { title: 'video', icon: 'video' }
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,

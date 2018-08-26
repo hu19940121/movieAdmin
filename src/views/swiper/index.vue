@@ -28,6 +28,14 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="channelId"
+            label="所属频道"
+            >
+            <template slot-scope="scope">
+              {{filterChannel(scope.row.channelId)}}
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="link"
             label="轮播图链接">
             <!-- <template slot-scope="scope">
@@ -63,6 +71,16 @@
         <el-form-item label="轮播图链接" :label-width="formLabelWidth">
           <el-input type="textarea"  placeholder="请输入轮播图链接" :autosize="{ minRows: 2, maxRows: 4}" v-model="form.link"></el-input>
         </el-form-item>
+        <el-form-item label="所属频道" :label-width="formLabelWidth">
+          <el-select v-model="form.channelId" placeholder="请选择">
+            <el-option
+            v-for="(channel,index) in channelList"
+            :key="index"
+            :label="channel.name"
+            :value="channel.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="轮播图图片" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
@@ -87,6 +105,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { getSwiper, addSwiper, delSwiper, getSwiperById, updateSwiper } from '@/api/swiper'
+import { getChannel } from '@/api/channel'
 
 export default {
   data() {
@@ -98,7 +117,8 @@ export default {
       form: {
         title: '',
         url: '',
-        link: ''
+        link: '',
+        channelId: ''
       },
       formLabelWidth: '120px',
       imageUrl: '',
@@ -108,16 +128,35 @@ export default {
       operationType: 1, // 操作类型 1增加 2更新,
       currentPage: 1,
       pageSize: 4,
-      count: 0
+      count: 0,
+      channelList: []
     }
   },
   created() {
     this.getSwiper()
     this.getQiniuToken()
+    this.getChannelList()
   },
   methods: {
+    filterChannel(channelId) {
+      const { channelList } = this
+      for (let i = 0; i < channelList.length; i++) {
+        if (channelList[i].id === channelId) {
+          return channelList[i].name
+        }
+      }
+    },
+    // 获取频道列表
+    getChannelList() {
+      const params = {
+        token: getToken()
+      }
+      getChannel(params).then(res => {
+        this.channelList = res.data
+      })
+    },
     dialogShow() {
-      this.dialogFormVisible = true,
+      this.dialogFormVisible = true
       this.form = { title: '', link: '', url: '' }
       this.imageUrl = ''
     },
@@ -134,7 +173,6 @@ export default {
     // 获取七牛token
     getQiniuToken() {
       this.http('/api/v1/getToken/getQiniuToken', {}).then(res => {
-        console.log(res)
         this.qiniuToken = res.token
         this.qiniuToken = {
           token: res.token
@@ -153,14 +191,12 @@ export default {
         ...page
       }
       getSwiper(params).then(res => {
-        console.log(res)
         this.loading = false
         this.tableData = res.data
         this.count = res.count
       })
     },
     del(id) {
-      console.log(id)
       this.$confirm('此操作将永久删除是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -176,7 +212,6 @@ export default {
       })
     },
     edit(id) {
-      console.log(id)
       this.operationType = 2
       this.dialogFormTitle = '编辑频道'
       this.dialogFormVisible = true
@@ -187,7 +222,6 @@ export default {
     },
     // 新增轮播图
     addSwiper() { // 1 新增 2更新
-      console.log(this.form)
       if (this.operationType === 1) {
         addSwiper(this.form).then(res => {
           if (res.code === 20000) {
@@ -225,7 +259,10 @@ export default {
       return isLt2M
 
       // return isJPG && isLt2M;
+    },
+    computed: {
     }
+
   }
 }
 </script>

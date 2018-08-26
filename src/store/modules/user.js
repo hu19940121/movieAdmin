@@ -15,7 +15,6 @@ const user = {
       state.token = token
     },
     SET_NAME: (state, name) => {
-      console.log(name)
       state.name = name
     },
     SET_AVATAR: (state, avatar) => {
@@ -30,11 +29,11 @@ const user = {
     // 登录
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
-      console.log(username)
+      // console.log(username)
 
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-          console.log(response)
+          // console.log(response)
 
           const data = response.data
 
@@ -52,7 +51,7 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
           const data = response.data
-          console.log(data)
+          // console.log(data)
 
           // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
           //   commit('SET_ROLES', data.roles)
